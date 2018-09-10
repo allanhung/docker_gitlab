@@ -1,0 +1,25 @@
+version: '3'
+services:
+    gitlab:
+        image: gitlab/gitlab-ce:latest
+        environment:
+            - DOMAIN_NAME=127.0.0.1
+            - HTTP_PORT=8080
+            - DB_HOST=mysql
+            - DB_PASSWORD=dbpass
+            - ZK_DEFAULT=zk:2181
+        ports:
+            - "80:80"
+            - "443:443"
+            - "9922:22"
+        volumes:
+            - "/opt/gitlab/config:/etc/gitlab"
+            - "/opt/gitlab/logs:/var/log/gitlab"
+            - "/opt/gitlab/data:/var/opt/gitlab"
+    gitlab-runner:
+        image: gitlab/gitlab-runner:alpine
+        volumes:
+            - "/opt/gitlab-runner/config:/etc/gitlab-runner"
+            - "/var/run/docker.sock:/var/run/docker.sock"
+        depends_on:
+            - gitlab
